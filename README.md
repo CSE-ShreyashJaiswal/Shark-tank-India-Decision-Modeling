@@ -14,7 +14,7 @@ This repository uses the Shark Tank India dataset from Kaggle and is organized a
 
 ## Dataset
 
-Source: Kaggle — **Shark Tank India** dataset  
+Source: [**Shark Tank India**](https://www.kaggle.com/datasets/thirumani/shark-tank-india) dataset on Kaggle by [Satya Thirumani](https://www.kaggle.com/datasets/thirumani)  
 Link: https://www.kaggle.com/datasets/thirumani/shark-tank-india/data
 
 The dataset contains pitch-level information from Shark Tank India episodes, including business details, ask amount, valuation, equity offered, revenue figures, pitch outcomes, and shark participation information.
