@@ -136,9 +136,9 @@ Generates visualizations.
 
 ## Responsibility Division
 
-The project is divided into **data pipeline development** and **modeling**, with clear ownership and collaboration.
+The project is divided into **data pipeline development** and **modeling**, with each member possessing understanding giving inputs in all domains, while having their main area of working as follows:
 
-### 👥 Members 1, 2, 3 — Data Pipeline & Analysis (Joint Responsibility)
+### ![Shreyash](https://github.com/cse-shreyashjaiswal), ![Soham](https://github.com/sohamnakhate), and ![Yadnik](https://github.com/yadnikbangale)
 
 Responsible for building the core data foundation of the project:
 
@@ -159,13 +159,23 @@ Responsible for building the core data foundation of the project:
   - Analyzing funding patterns, industries, and shark behavior
   - Generating insights to guide feature engineering and modeling
 
+- **Iterative Preprocessing Updation**
+  - Studying model performance analysis created by ![Varnan](https://github.com/varnan6)
+  - Interpreting the influence of preprocessing on model performmance
+  - Updating and iterating through viable preprocessing techniques to improve model performance
+
 > As there are ~80 attributes, these responsibilities are handled **jointly** with all three members extensively collaborating across loading, preprocessing, and EDA.
 
 ---
 
-### 👤 Member 4 — Modeling & Evaluation
+### ![Varnan](https://github.com/varnan6)
 
 Responsible for building and validating the predictive system:
+
+- **Preprocessing Supervision**:
+  - Oversees dataloading and preprocessing done by ![Shreyash](https://github.com/cse-shreyashjaiswal), ![Soham](https://github.com/sohamnakhate), and ![Yadnik](https://github.com/yadnikbangale)
+  - Verify processed data integrity and compatibility with respect to model expected input
+  - Implementing suggestions from ![Shreyash](https://github.com/cse-shreyashjaiswal), ![Soham](https://github.com/sohamnakhate), and ![Yadnik](https://github.com/yadnikbangale) for better modeling
 
 - **Training (`train.py`)**
   - Implement and train models for:
