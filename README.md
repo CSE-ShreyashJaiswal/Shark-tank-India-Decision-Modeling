@@ -1,6 +1,8 @@
-# Shark Tank India Decision Modeling
+# Shark Tank India Funding Modeling and Prediction
 
-An end-to-end machine learning project for analyzing **Shark Tank India** pitches and predicting:
+## Background
+
+Build an end-to-end ML system that analyzes the Shark Tank India dataset (750+ pitches, 80 columns, Seasons 1–5) to:
 
 1. **Funding amount received** for a pitching team (numerical prediction)
 2. **Whether a team receives funding at all** (binary prediction)
