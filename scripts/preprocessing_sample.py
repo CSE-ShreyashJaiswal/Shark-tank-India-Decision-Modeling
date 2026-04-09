@@ -1,4 +1,8 @@
+# preprocessing_final.py
+
 import pandas as pd
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+
 
 def run_preprocessing(df: pd.DataFrame):
     """
@@ -8,15 +12,15 @@ def run_preprocessing(df: pd.DataFrame):
         df -> DataFrame from dataloader.py
 
     Returns:
-        X -> final feature matrix
-        y_reg -> regression target
-        y_cls -> classification target
+        X_scaled -> final processed feature matrix
+        y_reg -> regression target (Total Deal Amount)
+        y_cls -> classification target (Accepted Offer)
         y_shark -> multi-label target
     """
 
-    # ===============================
+    # =========================================================
     # STEP 1 — PERSON 3 (SHARK DATA)
-    # ===============================
+    # =========================================================
 
     shark_amt_cols = [
         'Namita Investment Amount', 'Vineeta Investment Amount',
@@ -31,14 +35,14 @@ def run_preprocessing(df: pd.DataFrame):
         'Amit Present', 'Guest Present'
     ]
 
-    # Fill NaNs → 0
+    # Clean shark data
     df[shark_amt_cols] = df[shark_amt_cols].apply(pd.to_numeric, errors='coerce').fillna(0)
     df[shark_present_cols] = df[shark_present_cols].fillna(0)
 
     # Feature
     df['sharks_present_count'] = df[shark_present_cols].sum(axis=1)
 
-    # Target (Objective 3)
+    # Multi-label target (Objective 3)
     y_shark = (df[shark_amt_cols] > 0).astype(int)
     y_shark.columns = [
         'Namita_Invested', 'Vineeta_Invested',
@@ -53,9 +57,9 @@ def run_preprocessing(df: pd.DataFrame):
         ['sharks_present_count']
     ].copy()
 
-    # ===============================
-    # STEP 2 — PERSON 2 (FINANCIAL)
-    # ===============================
+    # =========================================================
+    # STEP 2 — PERSON 2 (FINANCIAL + DEAL)
+    # =========================================================
 
     financial_cols = [
         'Yearly Revenue', 'Monthly Sales', 'Gross Margin',
@@ -66,16 +70,16 @@ def run_preprocessing(df: pd.DataFrame):
         'Original Ask Amount', 'Original Offered Equity', 'Valuation Requested'
     ]
 
-    # 🔥 RECOMPUTE (CRITICAL)
+    # 🔥 Recompute dependent columns (CRITICAL)
     df['Total Deal Amount'] = df_person3[shark_amt_cols].sum(axis=1)
     df['Number of Sharks in Deal'] = (df_person3[shark_amt_cols] > 0).sum(axis=1)
 
-    # Clean numeric
+    # Clean numeric columns
     num_cols = financial_cols + ask_cols
     df[num_cols] = df[num_cols].apply(pd.to_numeric, errors='coerce')
     df[num_cols] = df[num_cols].fillna(df[num_cols].median())
 
-    # Clean target
+    # Clean classification target
     df['Accepted Offer'] = df['Accepted Offer'].fillna(0).astype(int)
 
     # Avoid division by zero
@@ -104,9 +108,9 @@ def run_preprocessing(df: pd.DataFrame):
         ]
     ].copy()
 
-    # ===============================
-    # STEP 3 — PERSON 1 (CONTEXT)
-    # ===============================
+    # =========================================================
+    # STEP 3 — PERSON 1 (CONTEXT + PITCHERS)
+    # =========================================================
 
     context_cols = [
         'Season Number', 'Season Start', 'Season End',
@@ -117,8 +121,8 @@ def run_preprocessing(df: pd.DataFrame):
         'Number of Presenters',
         'Male Presenters', 'Female Presenters',
         'Transgender Presenters', 'Couple Presenters',
-        'Pitchers Average Age',
-        'Pitchers City', 'Pitchers State'
+        'Pitchers Average Age'
+        # ⚠️ City & State dropped (high cardinality, low signal)
     ]
 
     num_cols_p1 = [
@@ -131,11 +135,7 @@ def run_preprocessing(df: pd.DataFrame):
     df[num_cols_p1] = df[num_cols_p1].apply(pd.to_numeric, errors='coerce')
     df[num_cols_p1] = df[num_cols_p1].fillna(df[num_cols_p1].median())
 
-    cat_cols = ['Industry', 'Pitchers City', 'Pitchers State']
-    for col in cat_cols:
-        df[col] = df[col].fillna(df[col].mode().iloc[0])
-
-    # Features
+    # Feature engineering
     gender_cols = [
         'Male Presenters', 'Female Presenters',
         'Transgender Presenters', 'Couple Presenters'
@@ -157,10 +157,34 @@ def run_preprocessing(df: pd.DataFrame):
         ['team_gender_diversity', 'season_number_norm']
     ].copy()
 
-    # ===============================
-    # STEP 4 — MERGE ALL
-    # ===============================
+    # =========================================================
+    # STEP 4 — MERGE ALL FEATURES
+    # =========================================================
 
     X = pd.concat([df_person1, df_person2, df_person3], axis=1)
 
-    return X, y_reg, y_cls, y_shark
+    # =========================================================
+    # STEP 5 — ENCODING
+    # =========================================================
+
+    # One-hot encode Industry
+    X = pd.get_dummies(X, columns=['Industry'], drop_first=True)
+
+    # Drop date columns (not useful directly)
+    X = X.drop(['Season Start', 'Season End'], axis=1, errors='ignore')
+
+    # =========================================================
+    # STEP 6 — SCALING (STANDARDIZATION)
+    # =========================================================
+
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+
+    # Optional: convert back to DataFrame (recommended)
+    X_scaled = pd.DataFrame(X_scaled, columns=X.columns)
+
+    # =========================================================
+    # FINAL OUTPUT
+    # =========================================================
+
+    return X_scaled, y_reg, y_cls, y_shark
