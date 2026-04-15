@@ -129,7 +129,7 @@ def run_preprocessing(df: pd.DataFrame):
         df[context_cols + pitcher_cols + ['team_gender_diversity', 'season_number_norm']],
         df[financial_cols + ['Cash Burn'] + ask_cols + [
             'ask_per_equity', 'valuation_ask_ratio', 'revenue_ask_ratio',
-            'is_revenue_positive', 'Number of Sharks in Deal'
+            'is_revenue_positive', #'Number of Sharks in Deal'
         ]],
         df[shark_amt_cols + shark_present_cols + ['sharks_present_count']]
     ], axis=1)
